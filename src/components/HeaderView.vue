@@ -1,24 +1,17 @@
 <template>
-  <!-- <div class="sticky top-0 w-full bg-Plantation z-50 border-solid border-b py-4 px-16">
-    Brand Name
-
-    <div class="w-full font-PlaywriteIN text-3xl font-bold text-Catskill_White">MindPal</div>
-    <div></div>
-  </div> -->
-
-  <nav class="bg-Plantation border-gray-200 dark:bg-gray-900">
+  <nav class="bg-white border border-gray-200 dark:bg-gray-900 sticky top-0 z-50">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
       <a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
         <!-- <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" /> -->
         <span
-          class="self-center font-PlaywriteIN text-3xl font-bold text-Catskill_White whitespace-nowrap dark:text-white"
+          class="self-center font-PlaywriteIN text-2xl font-bold text-[#31511E] whitespace-nowrap dark:text-white"
           >MindPal</span
         >
       </a>
       <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
         <button
           type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          class="text-white bg-[#859F3D] hover:bg-[#31511E] focus:ring-4 focus:ring-[#859F3D] focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-[#31511E] dark:hover:bg-[#31511E] dark:focus:ring-[#31511E]"
         >
           Get started
         </button>
@@ -52,12 +45,12 @@
         id="navbar-cta"
       >
         <ul
-          class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-Plantation dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
+          class="flex flex-col font-bold p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
         >
           <li>
             <a
               href="#"
-              class="block py-2 px-3 md:p-0 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:dark:text-blue-500"
+              class="block py-2 px-3 md:p-0 text-white bg-[#31511E] rounded md:bg-transparent md:text-[#31511E] md:dark:text-[#31511E]"
               aria-current="page"
               >Home</a
             >
@@ -65,21 +58,21 @@
           <li>
             <a
               href="#"
-              class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#31511E] md:dark:hover:text-[#31511E] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >About</a
             >
           </li>
           <li>
             <a
               href="#"
-              class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#31511E] md:dark:hover:text-[#31511E] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >Services</a
             >
           </li>
           <li>
             <a
               href="#"
-              class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-[#31511E] md:dark:hover:text-[#31511E] dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >Contact</a
             >
           </li>

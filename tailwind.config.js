@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        Pickled_Bluewood: '#294046',
-        Athens_Gray: '#eff1f4',
-        Catskill_White: '#ecf5f6',
+        Sushi: '#859F3D',
+        Bay_Leaf: '#85ae86',
+        Tiber: '#0b2e44',
         Water_Leaf: '#a6e8e0',
         Plantation: '#25434e',
       },
