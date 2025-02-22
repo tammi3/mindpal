@@ -5,7 +5,7 @@ const userStore = useUserStore()
 const { email, password, loading, error } = storeToRefs(userStore)
 
 function handleSubmit() {
-  userStore.loginUser()
+  userStore.signIn()
 }
 </script>
 

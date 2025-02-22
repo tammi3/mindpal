@@ -1,5 +1,7 @@
-<script setup></script>
+<script setup>
+import HeaderView from '@/components/HeaderView.vue'
+</script>
 
 <template>
-  <RouterView></RouterView>
+  <div><HeaderView /> <RouterView></RouterView></div>
 </template>

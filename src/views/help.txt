@@ -1,0 +1,161 @@
+{
+  "report_id": "report001",
+  "report_type": "flagged_message",  // Can be "flagged_message", "therapist_report", "user_report"
+  "reported_by": "user789",  // Can be "system" if auto-flagged
+  "timestamp": "2024-02-05T14:00:00Z",
+  "status": "pending",  // Can be "pending", "reviewed", "resolved"
+  "message": { 
+    "chatroom_id": "room001",
+    "message_id": "msg001",
+    "anonymous_id": "random123",
+    "text": "This message is inappropriate!"
+  },
+  "admin_action": null  // Example: "deleted", "warned user", "approved"
+}
+{
+  "chat_id": "chat123",
+  "user_id": "user456",
+  "therapist_id": "therapist789",
+  "messages": [
+    {
+      "sender_id": "user456",
+      "text": "Hello, I need help.",
+      "timestamp": "2024-02-05T12:00:00Z"
+    },
+    {
+      "sender_id": "therapist789",
+      "text": "Of course, how can I assist?",
+      "timestamp": "2024-02-05T12:02:00Z"
+    }
+  ]
+}
+{
+  "chatroom_id": "room001",
+  "messages": [
+    {
+      "message_id": "msg001",
+      "anonymous_id": "random123",
+      "text": "Does anyone have tips for dealing with anxiety?",
+      "timestamp": "2024-02-05T14:00:00Z",
+      "flagged": false
+    },
+    {
+      "message_id": "msg002",
+      "anonymous_id": "random456",
+      "text": "I practice mindfulness exercises.",
+      "timestamp": "2024-02-05T14:05:00Z",
+      "flagged": false
+    }
+  ]
+}
+// 3. Answer the call with the unique ID
+
+// const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }
+// let peerConnection
+
+// // Start a Call
+// const startCall = async () => {
+//   try {
+//     peerConnection = new RTCPeerConnection(servers)
+//     const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+//     localVideo.value.srcObject = localStream
+
+//     // Attach local stream to peer connection
+//     localStream.getTracks().forEach((track) => {
+//       peerConnection.addTrack(track, localStream)
+//     })
+
+//     const callDoc = doc(collection(db, 'calls'))
+//     callId.value = callDoc.id
+//     inCall.value = true
+
+//     const offer = await peerConnection.createOffer()
+//     await peerConnection.setLocalDescription(offer)
+
+//     await setDoc(callDoc, {
+//       callerId: '9TUiWQrtLFgAEKp8fM0Mu3x23Nr2',
+//       receiverId: 'T8yuR280yChZMRZG3jS45KbuCIT2', // Replace with actual receiver ID
+//       offer,
+//       status: 'pending',
+//     })
+
+//     peerConnection.onicecandidate = (event) => {
+//       if (event.candidate) {
+//         addDoc(collection(db, `calls/${callId.value}/candidates`), event.candidate.toJSON())
+//       }
+//     }
+
+//     // Ensure track event is properly handled
+//     peerConnection.ontrack = (event) => {
+//       console.log('Receiving remote stream...')
+
+//       remoteVideo.value.srcObject = event.streams[0]
+//     }
+//   } catch (error) {
+//     console.error('Error starting call:', error)
+//   }
+// }
+
+// // Accept a Call
+// const acceptCall = async () => {
+//   try {
+//     console.log('Accepting call...')
+//     // clearTimeout(callTimeout)
+//     incomingCall.value = false
+//     inCall.value = true
+
+//     peerConnection = new RTCPeerConnection(servers)
+//     const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+//     localVideo.value.srcObject = localStream
+
+//     // Attach local stream to peer connection
+//     localStream.getTracks().forEach((track) => {
+//       peerConnection.addTrack(track, localStream)
+//     })
+
+//     const callDoc = doc(db, 'calls', callId.value)
+//     const callData = (await getDoc(callDoc)).data()
+
+//     if (!callData?.offer) {
+//       console.error('No offer found in Firestore.')
+//       return
+//     }
+
+//     // Set the remote description BEFORE exchanging ICE candidates
+//     await peerConnection.setRemoteDescription(new RTCSessionDescription(callData.offer))
+
+//     const answer = await peerConnection.createAnswer()
+//     await peerConnection.setLocalDescription(answer)
+
+//     await setDoc(callDoc, { answer, status: 'accepted' }, { merge: true })
+
+//     // Listen for remote stream
+//     peerConnection.ontrack = (event) => {
+//       console.log('Receiving remote video stream...')
+//       console.log(event.streams[0])
+//       remoteVideo.value.srcObject = event.streams[0]
+//     }
+
+//     // Exchange ICE candidates
+//     peerConnection.onicecandidate = (event) => {
+//       if (event.candidate) {
+//         addDoc(collection(db, `calls/${callId.value}/candidates`), event.candidate.toJSON())
+//       }
+//     }
+
+//     // Listen for ICE candidates from Firestore
+//     onSnapshot(collection(db, `calls/${callId.value}/candidates`), (snapshot) => {
+//       snapshot.docChanges().forEach((change) => {
+//         if (change.type === 'added') {
+//           const candidateData = change.doc.data()
+//           peerConnection.addIceCandidate(new RTCIceCandidate(candidateData))
+//         }
+//       })
+//     })
+
+//     logCall('Accepted')
+//     console.log('Call accepted successfully.')
+//   } catch (error) {
+//     console.error('Error accepting call:', error)
+//   }
+// }

@@ -25,7 +25,7 @@ async function handleSubmit() {
       </h2>
       <p class="text-gray-600 mb-8 font-Montserrat">
         Already have an account?
-        <router-link to="/user/login" class="text-[#859F3D] font-medium underline"
+        <router-link to="/user/signin" class="text-[#859F3D] font-medium underline"
           >Sign in</router-link
         >
       </p>

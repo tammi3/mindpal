@@ -1,3 +1,68 @@
+<script setup>
+import Paystack from '@paystack/inline-js'
+import axios from 'axios'
+import { keys } from '@/utils/env'
+async function paymentGateway() {
+  // try {
+  //   const popup = new Paystack();
+  //   popup.newTransaction({
+  //     key: keys.paystack.publicKey,
+  //     email: this.userInfo.email,
+  //     amount: this.total * 100 * 1700,
+  //     currency: "NGN",
+  //     firstName: this.userInfo.name.firstname,
+  //     lastName: this.userInfo.name.lastname,
+  //     phone: this.phone,
+  //     channels: [
+  //       "card",
+  //       "bank",
+  //       "ussd",
+  //       "qr",
+  //       "eft",
+  //       "mobile_money",
+  //       "bank_transfer",
+  //       "apple_pay",
+  //     ],
+  //     onSuccess: (transaction) => {
+  //       console.log(transaction);
+  //       axios
+  //         .get(
+  //           `https://api.paystack.co/transaction/verify/${transaction.reference}`,
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${keys.paystack.secretKey}`,
+  //             },
+  //           }
+  //         )
+  //         .then((response) => {
+  //           const res = response.data;
+  //           //console.log(res);
+  //           if (
+  //             res.status &&
+  //             res.data.status == "success" &&
+  //             res.data.amount >= (this.total * 1700) / 100
+  //           ) {
+  //             this.createOrder();
+  //           }
+  //         });
+  //     },
+  //     onLoad: (response) => {
+  //       //console.log("onLoad: ", response);
+  //     },
+  //     onCancel: () => {
+  //       //console.log("onCancel");
+  //     },
+  //     onError: (error) => {
+  //       //console.log("Error: ", error.message);
+  //       this.flutterwave();
+  //     },
+  //   });
+  // } catch (error) {
+  //   //console.error(error);
+  // }
+}
+</script>
+
 <template>
   <div class="bg-Tiber p-10 lg:p-14">
     <div class="relative flex items-center justify-center">
@@ -71,7 +136,5 @@
     </div>
   </div>
 </template>
-
-<script setup></script>
 
 <style lang="scss" scoped></style>

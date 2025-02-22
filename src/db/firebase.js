@@ -29,6 +29,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   deleteUser,
+  sendEmailVerification,
   reauthenticateWithCredential,
   EmailAuthProvider,
 } from 'firebase/auth'
@@ -58,6 +59,7 @@ export {
   deleteObject,
   runTransaction,
   getDownloadURL,
+  sendEmailVerification,
   ref,
   query,
   where,

@@ -4,7 +4,6 @@ import { ref } from 'vue'
 import {
   HomeIcon,
   UsersIcon,
-  SettingsIcon,
   MenuIcon,
   LogOutIcon,
   StethoscopeIcon,
@@ -16,7 +15,6 @@ const isOpen = ref(true)
 const menuItems = [
   { name: 'Dashboard', icon: HomeIcon, route: '/admin' },
   { name: 'Users', icon: UsersIcon, route: '/admin/users' },
-  { name: 'Settings', icon: SettingsIcon, route: '/settings' },
   { name: 'Therapists', icon: StethoscopeIcon, route: '/admin/therapists' },
   { name: 'Reports', icon: FileTextIcon, route: '/admin/reports' },
 ]

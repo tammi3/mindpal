@@ -12,8 +12,10 @@ import {
   linkWithPopup,
   provider,
   ref,
+  sendEmailVerification,
   query,
   collection,
+  getDoc,
   where,
   getDocs,
   getDownloadURL,
@@ -43,12 +45,11 @@ export const useUserStore = defineStore('user', {
     lastName: '',
     profileImg: '',
     experience: '',
-
     userInfo: {},
   }),
   getters: {},
   actions: {
-    async registerStudent() {
+    async signUp() {
       const router = useRouter()
       const email = this.email
       const password = this.password
@@ -66,30 +67,21 @@ export const useUserStore = defineStore('user', {
               email: this.email,
               password: this.password,
               name: {
-                firstname: this.firstName,
-                lastname: this.lastName,
+                firstName: this.firstName,
+                lastName: this.lastName,
               },
               updatedProfileImage: false,
               id: user.uid,
-              creationTime: user.metadata.creationTime,
+              createdAt: user.metadata.creationTime,
+              role: 'student',
             }).then(() => {
               this.email = ''
               this.password = ''
               this.firstName = ''
               this.lastName = ''
             })
-            linkWithPopup(auth.currentUser, provider)
-              .then((result) => {
-                // Accounts successfully linked.
-                const credential = GoogleAuthProvider.credentialFromResult(result)
-                const user = result.user
-                console.log(user)
-                // ...
-              })
-              .catch((error) => {
-                // Handle Errors here.
-                // ...
-              })
+            sendEmailVerification(user)
+            console.log('Verification email sent. Please check your inbox.')
             const Toast = Swal.mixin({
               toast: true,
               position: 'top-end',
@@ -103,15 +95,13 @@ export const useUserStore = defineStore('user', {
             })
             Toast.fire({
               icon: 'success',
-              title: 'Signed in successfully',
+              title: 'Verification email sent. Please check your inbox.',
             })
-
-            router.push({ path: '/' })
           })
           .catch((err) => {
             this.loading = false
             window.scrollTo({ top: 0, behavior: 'smooth' })
-            if ((err.message = 'Firebase: Error (auth/email-already-in-use).')) {
+            if (err.message === 'Firebase: Error (auth/email-already-in-use).') {
               this.error = 'Email already associated with another account.'
             } else {
               this.error = err.message.slice(9)
@@ -124,7 +114,7 @@ export const useUserStore = defineStore('user', {
           'Password must be at least 6 characters, with 1 special character and 1 number.'
       }
     },
-    loginUser() {
+    signIn() {
       const router = useRouter()
       const email = this.email
       const password = this.password
@@ -132,24 +122,47 @@ export const useUserStore = defineStore('user', {
       this.error = ''
       signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-          const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-              toast.onmouseenter = Swal.stopTimer
-              toast.onmouseleave = Swal.resumeTimer
-            },
-          })
-          Toast.fire({
-            icon: 'success',
-            title: 'Welcome back!',
-          })
+          const user = auth.currentUser
+          console.log(user)
+          if (!user.emailVerified) {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer
+                toast.onmouseleave = Swal.resumeTimer
+              },
+            })
+            Toast.fire({
+              icon: 'error',
+              title: 'Email not verified. Please check your inbox.',
+            })
+
+            return
+          } else {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer
+                toast.onmouseleave = Swal.resumeTimer
+              },
+            })
+            Toast.fire({
+              icon: 'success',
+              title: 'Welcome back!',
+            })
+          }
+
           this.email = ''
           this.password = ''
-          router.push({ path: '/Dashboard/Main' })
+          router.push({ path: '/' })
         })
         .catch((err) => {
           window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -161,7 +174,7 @@ export const useUserStore = defineStore('user', {
           }
         })
     },
-    async logOut() {
+    async signOut() {
       const router = useRouter()
       signOut(auth)
         .then(() => {
@@ -171,21 +184,43 @@ export const useUserStore = defineStore('user', {
           // console.log(err.message);
         })
     },
-    getUserInfo() {
+    getProfileImg() {
       const user = auth.currentUser
-      const unsub = onSnapshot(doc(db, 'users', user.uid), (doc) => {
-        this.userInfo = doc.data()
-        // if (this.userInfo.updatedProfileImage) {
-        //   getDownloadURL(ref(storage, 'profile/' + this.userInfo.profile_image))
-        //     .then((url) => {
-        //       // Or inserted into an <img> element
-        //       this.profileImg = url
-        //       // const img = document.getElementById("profileImg");
-        //       // img.setAttribute("src", url);
-        //     })
-        //     .catch((error) => {})
-        // }
-      })
+      if (user && this.userInfo.updatedProfileImage) {
+        this.updatedProfileImage = true
+        getDownloadURL(ref(storage, 'profile/' + user.uid))
+          .then((url) => {
+            // Or inserted into an <img> element
+            const img = document.getElementById('profile')
+            img.setAttribute('src', url)
+            this.profileImg = url
+          })
+          .catch((error) => {})
+      } else {
+        this.updatedProfileImage = false
+      }
+    },
+    async getUserInfo() {
+      const user = auth.currentUser
+      if (user) {
+        const therapistRef = doc(db, 'therapists', user.uid)
+        const studentRef = doc(db, 'users', user.uid)
+        const studentSnap = await getDoc(studentRef)
+
+        if (studentSnap.exists()) {
+          onSnapshot(studentRef, (doc) => {
+            this.userInfo = doc.data()
+            this.getProfileImg()
+          })
+        } else {
+          onSnapshot(therapistRef, (doc) => {
+            this.userInfo = doc.data()
+            this.getProfileImg()
+          })
+        }
+      } else {
+        this.userInfo = ''
+      }
     },
     uploadImage() {
       this.loadingUpdateImg = true
@@ -195,13 +230,12 @@ export const useUserStore = defineStore('user', {
       updateImg.src = URL.createObjectURL(inputFile.files[0])
       var image = inputFile.files[0]
 
-      const storageRef = ref(storage, 'profile/' + image.name)
+      const storageRef = ref(storage, 'profile/' + user.uid)
 
       //uploads image to database
       uploadBytes(storageRef, image).then((snapshot) => {
         //updates the user profile picture information
         updateDoc(doc(db, 'users', user.uid), {
-          profile_image: image.name,
           updatedProfileImage: true,
         })
         this.loadingUpdateImg = false
@@ -210,7 +244,7 @@ export const useUserStore = defineStore('user', {
     deleteImage() {
       this.loadingDeleteImg = true
       const user = auth.currentUser
-      const storageRef = ref(storage, 'profile/' + this.userInfo.profile_image)
+      const storageRef = ref(storage, 'profile/' + user.uid)
       deleteObject(storageRef).then(() => {
         updateDoc(doc(db, 'users', user.uid), {
           updatedProfileImage: false,

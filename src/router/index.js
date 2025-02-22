@@ -10,7 +10,18 @@ const router = createRouter({
       meta: { requiresAuth: false },
       component: LandingView,
     },
-
+    {
+      path: '/anon-chat/:cat',
+      name: 'anon-chat',
+      meta: { requiresAuth: true },
+      component: () => import('../views/AnonChat.vue'),
+    },
+    {
+      path: '/anon-chats',
+      name: 'anon-chats',
+      meta: { requiresAuth: true },
+      component: () => import('../views/AnonChats.vue'),
+    },
     {
       path: '/user',
       name: 'user',
@@ -18,10 +29,10 @@ const router = createRouter({
       component: () => import('../views/UserAuth.vue'),
       children: [
         {
-          path: 'login',
-          name: 'login',
+          path: 'signin',
+          name: 'signin',
           meta: { requiresAuth: false },
-          component: () => import('../views/LoginUser.vue'),
+          component: () => import('../views/SigninUser.vue'),
         },
         {
           path: 'signup',
@@ -43,8 +54,15 @@ const router = createRouter({
       ],
     },
     {
-      path: '/chatroom/:id',
-      name: 'chatroom',
+      path: '/chat-call/:id',
+      name: 'chat-call',
+      meta: { requiresAuth: true },
+      component: () => import('../views/CallVideo.vue'),
+    },
+
+    {
+      path: '/chat/:id',
+      name: 'chat',
       meta: { requiresAuth: true },
       component: () => import('../views/ChatRoom.vue'),
     },
@@ -74,6 +92,19 @@ const router = createRouter({
       component: () => import('../views/ViewResource.vue'),
     },
     {
+      path: '/user-profile',
+      name: 'user-profile',
+      meta: { requiresAuth: true },
+      component: () => import('../views/UserProfile.vue'),
+    },
+
+    {
+      path: '/chat-history',
+      name: 'chat-history',
+      meta: { requiresAuth: true },
+      component: () => import('../views/ChatHistory.vue'),
+    },
+    {
       path: '/admin',
       name: 'admin',
       meta: { requiresAuth: true },
@@ -81,21 +112,27 @@ const router = createRouter({
       children: [
         {
           path: 'reports',
-          name: 'reports',
+          name: 'admin-reports',
           meta: { requiresAuth: true },
           component: () => import('../views/AdminReport.vue'),
         },
         {
           path: 'users',
-          name: 'users',
+          name: 'admin-users',
           meta: { requiresAuth: true },
           component: () => import('../views/AdminUsers.vue'),
         },
         {
           path: 'therapists',
-          name: 'therapists',
+          name: 'admin-therapists',
           meta: { requiresAuth: true },
           component: () => import('../views/AdminTherapists.vue'),
+        },
+        {
+          path: 'resources',
+          name: 'admin-resources',
+          meta: { requiresAuth: true },
+          component: () => import('../views/AdminResources.vue'),
         },
       ],
     },
