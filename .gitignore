@@ -23,10 +23,13 @@ coverage
 .vscode/*
 !.vscode/extensions.json
 .idea
-*.suo
+*.suoz
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
 *.tsbuildinfo
+# ignore ALL .env files
+.env
+.env.*
