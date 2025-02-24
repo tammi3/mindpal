@@ -6,6 +6,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import { faUser } from '@fortawesome/free-regular-svg-icons'
 const userStore = useUserStore()
 const therapistStore = useTherapistStore()
 const { userInfo } = storeToRefs(userStore)
@@ -51,10 +52,18 @@ onMounted(async () => {
     <section v-if="therapist.name" class="w-full max-w-5xl mx-auto my-8 p-6 lg:px-16">
       <div class="flex flex-col md:flex-row items-center gap-6">
         <img
+          v-if="therapist.updatedProfileImage"
           src=""
           alt="Therapist Profile"
           class="w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-Bay_Leaf"
         />
+        <div
+          v-else
+          class="flex items-center justify-center w-40 h-40 md:w-52 md:h-52 rounded-full border-2 md:border-4 border-Bay_Leaf bg-gray-100 shadow-lg"
+        >
+          <FontAwesomeIcon class="text-7xl md:text-[9rem] text-Tiber" :icon="faUser" />
+        </div>
+
         <div class="flex-1">
           <h2 class="text-3xl font-bold text-Tiber">
             {{ therapist?.title }} {{ therapist.name.firstName }} {{ therapist.name.lastName }}
@@ -116,10 +125,7 @@ onMounted(async () => {
         <div class="flex items-center space-x-3 mt-4">
           <label class="cursor-pointer">
             <input type="file" @change="handleFileUpload" class="hidden" accept="image/*" />
-            <img
-              :src="profileImage || 'https://via.placeholder.com/100'"
-              class="w-16 h-16 rounded-full border object-cover"
-            />
+            <img :src="profileImage" class="w-16 h-16 rounded-full border object-cover" />
           </label>
           <p class="text-gray-600 text-sm">Click to update profile picture</p>
         </div>

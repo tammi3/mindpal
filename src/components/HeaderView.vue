@@ -287,6 +287,13 @@ onMounted(() => {
                   class="text-gray-700 font-bold hover:border-2 hover:rounded-md hover:border-gray-300 p-2"
                   >Profile
                 </router-link>
+                <router-link
+                  to="/chat-history"
+                  v-if="userInfo.role !== 'admin'"
+                  activeClass="border-2 shadow-md shadow-gray-300 border-gray-400 rounded-md  p-2 "
+                  class="text-gray-700 font-bold hover:border-2 hover:rounded-md hover:border-gray-300 p-2"
+                  >Messages
+                </router-link>
                 <routerLink
                   v-if="userInfo.role === 'admin'"
                   activeClass="border-2 shadow-md shadow-gray-300 border-gray-400 rounded-md  p-2 "

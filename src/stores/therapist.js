@@ -76,7 +76,7 @@ export const useTherapistStore = defineStore('therapist', {
     async getTherapists(filter) {
       if (filter == 'All') {
         const q = query(collection(db, 'therapists'))
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        onSnapshot(q, (querySnapshot) => {
           this.therapists = []
           querySnapshot.forEach((doc) => {
             this.therapists.push({
@@ -138,7 +138,8 @@ export const useTherapistStore = defineStore('therapist', {
               specialisation: this.specialisation,
               updatedProfileImage: false,
               experience: this.experience,
-              userId: user.uid,
+              isAvailable: true,
+              id: user.uid,
               isVerified: false,
               status: 'Pending',
               creationTime: Timestamp.fromDate(new Date()),
@@ -173,7 +174,7 @@ export const useTherapistStore = defineStore('therapist', {
           .catch((err) => {
             this.loading = false
             window.scrollTo({ top: 0, behavior: 'smooth' })
-            if ((err.message = 'Firebase: Error (auth/email-already-in-use).')) {
+            if (err.message === 'Firebase: Error (auth/email-already-in-use).') {
               this.error = 'Email already associated with another account.'
             } else {
               this.error = err.message.slice(9)

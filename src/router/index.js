@@ -11,8 +11,8 @@ const router = createRouter({
       component: LandingView,
     },
     {
-      path: '/anon-chat/:cat',
-      name: 'anon-chat',
+      path: '/anon-chatroom/:id',
+      name: 'anon-chatroom',
       meta: { requiresAuth: true },
       component: () => import('../views/AnonChat.vue'),
     },
@@ -66,6 +66,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
       component: () => import('../views/ChatRoom.vue'),
     },
+    {
+      path: '/chat-history',
+      name: 'chat-history',
+      meta: { requiresAuth: true },
+      component: () => import('../views/ChatHistory.vue'),
+    },
 
     {
       path: '/our-team',
@@ -98,12 +104,6 @@ const router = createRouter({
       component: () => import('../views/UserProfile.vue'),
     },
 
-    {
-      path: '/chat-history',
-      name: 'chat-history',
-      meta: { requiresAuth: true },
-      component: () => import('../views/ChatHistory.vue'),
-    },
     {
       path: '/admin',
       name: 'admin',

@@ -11,6 +11,7 @@ import {
   getDoc,
   doc,
   setDoc,
+  addDoc,
   onSnapshot,
   updateDoc,
   arrayUnion,
@@ -23,6 +24,7 @@ import CryptoJS from 'crypto-js'
 export const useChatStore = defineStore('Chat', {
   // arrow function recommended for full type inference
   state: () => ({
+    anonChatName: '',
     loading: false,
     secretKey: 'a1eb884beb21593c4147e975695deb38b10c67d3f6167d179f970b7237df69ef',
     error: '',
@@ -37,11 +39,13 @@ export const useChatStore = defineStore('Chat', {
     lastName: '',
     profileImg: '',
     therapist: {},
+    student: {},
     therapistImg: '',
     messages: [],
     anonMessages: [],
     chats: [],
     userInfo: {},
+    chatrooms: [],
   }),
   getters: {},
   actions: {
@@ -52,8 +56,37 @@ export const useChatStore = defineStore('Chat', {
       const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey)
       return bytes.toString(CryptoJS.enc.Utf8)
     },
-    sendAnonMessage() {
-      this.anonMessages = []
+    async sendAnonMessage(chatId, text, anonId) {
+      try {
+        const encrypt = this.encryptMessage(text)
+
+        console.log(this.message)
+        const decypher = this.decryptMessage(this.encryptMessage(text))
+        console.log('Decrypted message:', decypher)
+        console.log(containsProfanities(decypher))
+
+        if (isProfane(decypher)) {
+          const profanities = containsProfanities(decypher).slice(0, 2)
+          const extraProfanityWord = profanities.length > 1 ? `, ${profanities[1].word}, etc.` : ''
+          this.message.text = text
+          Swal.fire({
+            text: `We noticed some words in your message that may not be appropriate for this space (eg.${profanities[0].word} ${extraProfanityWord}). Please rephrase and try again.`,
+            icon: 'warning',
+            confirmButtonColor: '#a6e8e0',
+          })
+        } else {
+          this.text = ''
+          const message = {
+            anonymousId: anonId,
+            text: encrypt,
+            timestamp: new Date(),
+            flagged: false,
+          }
+          await addDoc(collection(db, 'anonChatrooms', chatId, 'messages'), message)
+        }
+      } catch (error) {
+        console.error('Error sending message:', error)
+      }
     },
     createChat(chatId) {
       const studentId = chatId.slice(28)
@@ -132,7 +165,6 @@ export const useChatStore = defineStore('Chat', {
       console.log(containsProfanities(decypher))
 
       if (isProfane(decypher)) {
-        console.log(decypher)
         const profanities = containsProfanities(decypher).slice(0, 2)
         const extraProfanityWord = profanities.length > 1 ? `, ${profanities[1].word}, etc.` : ''
         this.message.text = text
@@ -154,46 +186,68 @@ export const useChatStore = defineStore('Chat', {
     async chatHistory() {
       this.chats = []
       const user = auth.currentUser
-      // const therapistRef = doc(db, 'therapists', user.uid)
       const studentRef = doc(db, 'users', user.uid)
       const studentSnap = await getDoc(studentRef)
-      // const therapistSnap = await getDoc(therapistRef)
       const chatsRef = collection(db, 'chats')
+      const isStudent = studentSnap.exists()
+      const userType = isStudent ? 'studentId' : 'therapistId'
+      const fetchProfileImage = async (id) => {
+        if (!id) return '' // Return an empty string if ID is missing
 
-      if (studentSnap.exists()) {
-        const q = query(chatsRef, where('studentId', '==', user.uid))
-        const querySnapshot = await getDocs(q)
-        querySnapshot.forEach((document) => {
-          const therapistId = document.data().therapistId
-          onSnapshot(doc(db, 'therapists', therapistId), (doc) => {
-            this.therapist = doc.data()
-            console.log(this.therapist)
-            if (this.therapist.updatedProfileImage) {
-              this.updatedProfileImage = true
-              getDownloadURL(ref(storage, 'profile/' + therapistId))
-                .then((url) => {
-                  this.therapistImg = url
-                })
-                .catch((error) => {})
-            } else {
-              this.chats.push({
-                id: document.id,
-                ...document.data(),
-                img: this.therapistImg,
-                user: { ...this.therapist },
-              })
-            }
+        try {
+          return await getDownloadURL(ref(storage, `profile/${id}`))
+        } catch (error) {
+          console.error(`Error fetching profile for ${id}:`, error)
+          return '' // Return a default value (empty string) if fetching fails
+        }
+      }
+      const q = query(chatsRef, where(userType, '==', user.uid))
+      const querySnapshot = await getDocs(q)
+      querySnapshot.forEach((document) => {
+        const chatData = document.data()
+        const participantId = isStudent ? chatData.therapistId : chatData.studentId
+        const participantCollection = isStudent ? 'therapists' : 'users'
+        onSnapshot(doc(db, participantCollection, participantId), async (doc) => {
+          const participantDoc = doc.data()
+          const profileImg = await fetchProfileImage(participantDoc.id)
+          this.chats.push({
+            id: document.id,
+            ...document.data(),
+
+            user: {
+              ...participantDoc,
+              img: profileImg,
+            },
+          })
+        })
+      })
+    },
+    async getAnonChatrooms() {
+      this.chatrooms = []
+      const querySnapshot = await getDocs(collection(db, 'anonChatrooms'))
+      querySnapshot.forEach((doc) => {
+        this.chatrooms.push({
+          name: doc.data().name,
+          id: doc.id,
+        })
+      })
+    },
+    async getAnonChatMessages(id) {
+      const anonChatRef = doc(db, 'anonChatrooms', id)
+      const anonChatSnap = await getDoc(anonChatRef)
+      if (anonChatSnap.exists()) {
+        this.anonChatName = anonChatSnap.data().name
+        this.anonMessages = []
+        const querySnapshot = await getDocs(collection(db, 'anonChatrooms', id, 'messages'))
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data())
+          this.anonMessages.push({
+            ...doc.data(),
+            id: doc.id,
           })
         })
       } else {
-        const q = query(chatsRef, where('therapistId', '==', user.uid))
-        const querySnapshot = await getDocs(q)
-        querySnapshot.forEach((doc) => {
-          this.chats.push({
-            id: doc.id,
-            ...doc.data(),
-          })
-        })
+        console.log('hdh')
       }
     },
   },
