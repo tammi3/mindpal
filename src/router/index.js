@@ -140,7 +140,7 @@ const router = createRouter({
 })
 router.beforeEach(async (to, from) => {
   let loggedIn = (localStorage.getItem('loggedIn') == 'true' ? true : false) || false
-  // console.log(from)
+  console.log(from)
   if (to.meta.requiresAuth && !loggedIn) return { name: 'login' }
   // if (to.path.startsWith('/user') && loggedIn) return { path: '/' }
   if (to.meta.requiresAuth && loggedIn) return true
